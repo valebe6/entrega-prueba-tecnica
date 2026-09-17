@@ -1,0 +1,31 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+
+Description: Arquitectura AWS - Portal de equipo
+
+Resources:
+  FrontendBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+
+  DashboardMetricsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/
+      Handler: src/app.handler
+      Runtime: nodejs20.x
+      Timeout: 30
+      MemorySize: 256
+
+Outputs:
+  FrontendBucketName:
+    Description: Bucket S3 para el frontend
+    Value: !Ref FrontendBucket
+
+  DashboardLambda:
+    Description: Lambda de métricas
+    Value: !Ref DashboardMetricsFunction
