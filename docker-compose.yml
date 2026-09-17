@@ -1,0 +1,54 @@
+services:
+
+  postgres:
+    image: postgres:16
+    container_name: prueba-tecnica-postgres
+
+    environment:
+      POSTGRES_DB: pruebatecnica
+      POSTGRES_USER: vale
+      POSTGRES_PASSWORD: Pass123
+
+    ports:
+      - "5433:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  back:
+    build:
+      context: ./backend
+
+    container_name: prueba-tecnica-back
+
+    environment:
+      PORT: 3000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: vale
+      DB_PASSWORD: Pass123
+      DB_NAME: pruebatecnica
+
+      JWT_SECRET: prueba-tecnica-secret-key
+      JWT_EXPIRES_IN: 1d
+
+    ports:
+      - "3000:3000"
+
+    depends_on:
+      - postgres
+
+  front:
+    build:
+      context: ./frontend
+
+    container_name: prueba-tecnica-front
+
+    ports:
+      - "4200:80"
+
+    depends_on:
+      - back
+
+volumes:
+  postgres_data:

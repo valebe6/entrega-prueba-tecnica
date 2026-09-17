@@ -1,0 +1,34 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: "Lambda para calcular las m\xE9tricas del dashboard"
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 256
+Resources:
+  DashboardMetricsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: DashboardMetricsFunction
+      Handler: src/app.handler
+      Runtime: nodejs20.x
+      Environment:
+        Variables:
+          DB_HOST: postgres
+          DB_PORT: '5432'
+          DB_USERNAME: vale
+          DB_PASSWORD: Pass123
+          DB_NAME: pruebatecnica
+      Events:
+        DashboardMetricsApi:
+          Type: Api
+          Properties:
+            Path: /dashboard
+            Method: get
+    Metadata:
+      SamResourceId: DashboardMetricsFunction
+Outputs:
+  DashboardMetricsApi:
+    Description: "Endpoint de m\xE9tricas"
+    Value:
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/dashboard
